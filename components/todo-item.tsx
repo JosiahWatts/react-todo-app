@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { TodoStatus } from '../lib/enums';
 import { Todo } from '../lib/todo.model';
+import { TodoStatusSelector } from './todo-status-selector';
 import { Toggle } from './toggle';
 
 export interface TodoItemProps {
@@ -27,17 +29,37 @@ export const TodoItem: React.FC<TodoItemProps> = (props) => {
     });
   }
 
+  function handleStatusUpdate(status: TodoStatus) {
+    setUpdatedItem({
+      ...item,
+      status,
+    });
+  }
+
   function handleSave() {
     setItem({ ...updatedItem });
     setIsEditMode(false);
   }
 
+  function getStatusIcon(status: TodoStatus) {
+    if (status === TodoStatus.New) return '📄';
+    if (status === TodoStatus.InProgress) return '⏳';
+    if (status === TodoStatus.Completed) return '✅';
+  }
+
   return (
     <>
       {isEditMode ? (
-        <>
+        <tr>
+          <td className="text-center">
+            <TodoStatusSelector
+              initialStatus={updatedItem.status}
+              onChange={handleStatusUpdate}
+            />
+          </td>
           <td>
             <input
+              className="w-full form-input"
               type="text"
               name="title"
               id="{updatedItem.title}-name"
@@ -48,6 +70,7 @@ export const TodoItem: React.FC<TodoItemProps> = (props) => {
           </td>
           <td>
             <input
+              className="w-full form-input"
               type="text"
               name="description"
               id="{updatedItem.title}-description"
@@ -57,27 +80,24 @@ export const TodoItem: React.FC<TodoItemProps> = (props) => {
             />
           </td>
           <td className="text-right">
-            <Toggle
-              label={`Complete ${updatedItem.title}`}
-              toggled={updatedItem.completed}
-            />
-          </td>
-          <td className="text-right">
             <button className="mr-4" onClick={handleSave}>
               Save
             </button>
             <button onClick={toggleEditMode}>Cancel</button>
           </td>
-        </>
+        </tr>
       ) : (
-        <>
+        <tr>
+          <td className="text-center">{getStatusIcon(item.status)}</td>
           <td>{item.title}</td>
           <td>{item.description}</td>
-          <td className="text-right">{`${item.completed}`}</td>
           <td className="text-right">
-            <button onClick={toggleEditMode}>Edit</button>
+            <button className="mr-4" onClick={toggleEditMode}>
+              Edit
+            </button>
+            <button onClick={toggleEditMode}>Delete</button>
           </td>
-        </>
+        </tr>
       )}
     </>
   );
