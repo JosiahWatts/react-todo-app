@@ -2,16 +2,16 @@ import React, { useState } from 'react';
 import { TodoStatus } from '../lib/enums';
 import { Todo } from '../lib/todo.model';
 import { TodoStatusSelector } from './todo-status-selector';
-import { Toggle } from './toggle';
 
 export interface TodoItemProps {
   item: Todo;
-  isEditMode?: boolean;
+  handleTodoUpdate: (todo: Todo) => void;
+  handleTodoDelete: (id: number) => void;
 }
 
 export const TodoItem: React.FC<TodoItemProps> = (props) => {
-  const [item, setItem] = useState<Todo>(props.item);
-  const [updatedItem, setUpdatedItem] = useState<Todo>(props.item);
+  const { item, handleTodoUpdate, handleTodoDelete } = props;
+  const [updatedItem, setUpdatedItem] = useState<Todo>(item);
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
 
   function toggleEditMode() {
@@ -24,27 +24,33 @@ export const TodoItem: React.FC<TodoItemProps> = (props) => {
 
   function handleChange(e: any) {
     setUpdatedItem({
-      ...item,
+      ...updatedItem,
       [e.target.name]: e.target.value,
     });
   }
 
   function handleStatusUpdate(status: TodoStatus) {
     setUpdatedItem({
-      ...item,
+      ...updatedItem,
       status,
     });
   }
 
+  function handleDelete() {
+    handleTodoDelete(item.id);
+  }
+
   function handleSave() {
-    setItem({ ...updatedItem });
+    handleTodoUpdate(updatedItem);
     setIsEditMode(false);
   }
 
-  function getStatusIcon(status: TodoStatus) {
-    if (status === TodoStatus.New) return '📄';
+  function renderStatusIcon(status: TodoStatus): string {
+    if (status === TodoStatus.New) return '🗒️';
     if (status === TodoStatus.InProgress) return '⏳';
     if (status === TodoStatus.Completed) return '✅';
+
+    return '';
   }
 
   return (
@@ -65,7 +71,7 @@ export const TodoItem: React.FC<TodoItemProps> = (props) => {
               id="{updatedItem.title}-name"
               value={updatedItem.title}
               onChange={handleChange}
-              placeholder={updatedItem.title}
+              placeholder={item.title}
             />
           </td>
           <td>
@@ -76,26 +82,26 @@ export const TodoItem: React.FC<TodoItemProps> = (props) => {
               id="{updatedItem.title}-description"
               value={updatedItem.description}
               onChange={handleChange}
-              placeholder={updatedItem.description}
+              placeholder={item.description}
             />
           </td>
           <td className="text-right">
-            <button className="mr-4" onClick={handleSave}>
+            <button className="mr-4 btn-tertiary --small" onClick={handleSave}>
               Save
             </button>
-            <button onClick={toggleEditMode}>Cancel</button>
+            <button className="btn-tertiary --small" onClick={toggleEditMode}>Cancel</button>
           </td>
         </tr>
       ) : (
         <tr>
-          <td className="text-center">{getStatusIcon(item.status)}</td>
+          <td className="text-center">{renderStatusIcon(item.status)}</td>
           <td>{item.title}</td>
           <td>{item.description}</td>
           <td className="text-right">
-            <button className="mr-4" onClick={toggleEditMode}>
+            <button className="mr-4 btn-tertiary --small" onClick={toggleEditMode}>
               Edit
             </button>
-            <button onClick={toggleEditMode}>Delete</button>
+            <button className="btn-tertiary --small --danger" onClick={handleDelete}>Delete</button>
           </td>
         </tr>
       )}

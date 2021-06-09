@@ -12,12 +12,28 @@ table thead td {
 
 table tbody td {
     padding: 0.75rem;   
-    height: 63px;
+    height: 67px;
 }
 
 @layer components {
     .form-input {
-        @apply block border py-2 pl-2 focus:ring-indigo-500 focus:border-indigo-500 w-full sm:text-sm border-gray-300 rounded-md;
+        @apply block border py-2 pl-2 focus:ring-indigo-500 focus:border-indigo-500 w-full border-gray-300 rounded-md;
+    }
+
+    .btn-primary {
+        @apply bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded;
+    }
+
+    .btn-tertiary {
+        @apply hover:bg-blue-700 hover:text-white font-bold py-2 px-4 rounded;
+    }
+
+    .btn-tertiary.--small {
+        @apply py-1 px-2;
+    }
+
+    .btn-tertiary.--danger {
+        @apply  hover:bg-red-700;
     }
   }
 
