@@ -30,8 +30,8 @@ export default function Home() {
   function handleNewTodoClick() {
     const newTodo: Todo = {
       id: todos.length + 1,
-      title: `Todo ${todos.length + 1}`,
-      description: 'Just another todo!',
+      title: `Untitled`,
+      description: '',
       status: TodoStatus.New,
     };
 

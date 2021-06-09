@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TodoStatus } from '../lib/enums';
 import { Todo } from '../lib/todo.model';
+import { EditableText } from './editable-text';
 import { TodoStatusSelector } from './todo-status-selector';
 
 export interface TodoItemProps {
@@ -54,57 +55,60 @@ export const TodoItem: React.FC<TodoItemProps> = (props) => {
   }
 
   return (
-    <>
-      {isEditMode ? (
-        <tr>
-          <td className="text-center">
-            <TodoStatusSelector
-              initialStatus={updatedItem.status}
-              onChange={handleStatusUpdate}
-            />
-          </td>
-          <td>
-            <input
-              className="w-full form-input"
-              type="text"
-              name="title"
-              id="{updatedItem.title}-name"
-              value={updatedItem.title}
-              onChange={handleChange}
-              placeholder={item.title}
-            />
-          </td>
-          <td>
-            <input
-              className="w-full form-input"
-              type="text"
-              name="description"
-              id="{updatedItem.title}-description"
-              value={updatedItem.description}
-              onChange={handleChange}
-              placeholder={item.description}
-            />
-          </td>
-          <td className="text-right">
+    <tr>
+      <td className="text-center">
+        {isEditMode ? (
+          <TodoStatusSelector
+            initialStatus={updatedItem.status}
+            onChange={handleStatusUpdate}
+          />
+        ) : (
+          renderStatusIcon(updatedItem.status)
+        )}
+      </td>
+      <td>
+        <EditableText
+          isEditing={isEditMode}
+          text={updatedItem.title}
+          value="title"
+          handleChange={handleChange}
+        />
+      </td>
+      <td>
+        <EditableText
+          isEditing={isEditMode}
+          text={updatedItem.description}
+          value="description"
+          handleChange={handleChange}
+        />
+      </td>
+      <td className="text-right">
+        {isEditMode ? (
+          <div>
             <button className="mr-4 btn-tertiary --small" onClick={handleSave}>
               Save
             </button>
-            <button className="btn-tertiary --small" onClick={toggleEditMode}>Cancel</button>
-          </td>
-        </tr>
-      ) : (
-        <tr>
-          <td className="text-center">{renderStatusIcon(item.status)}</td>
-          <td>{item.title}</td>
-          <td>{item.description}</td>
-          <td className="text-right">
-            <button className="mr-4 btn-tertiary --small" onClick={toggleEditMode}>
+            <button className="btn-tertiary --small" onClick={toggleEditMode}>
+              Cancel
+            </button>
+          </div>
+        ) : (
+          <div>
+            <button
+              className="mr-4 btn-tertiary --small"
+              onClick={toggleEditMode}
+            >
               Edit
             </button>
-            <button className="btn-tertiary --small --danger" onClick={handleDelete}>Delete</button>
-          </td>
-        </tr>
-      )}
-    </>
+            <button
+              className="btn-tertiary --small --danger"
+              onClick={handleDelete}
+            >
+              Delete
+            </button>
+          </div>
+        )}
+      </td>
+    </tr>
   );
 };
